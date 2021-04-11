@@ -3,7 +3,6 @@ name: $(BuildID)
 trigger:
 - production
 - main
-- feat/split-pipeline # TESTING
 
 pr: none
 
@@ -16,7 +15,7 @@ variables:
 stages:
 - stage: Deployment
 
-  # need stage scope to get values 🤨
+  # need stage scope to process values 🤨
   variables:
   - ${{ if eq(variables.isMain, 'True') }}:
     - template: vars-dev.yaml
@@ -28,51 +27,46 @@ stages:
   # --------------
   - job: Deploy
     steps:
-    - template: step-debug.yaml
-    - script: |
-        echo "##vso[task.setvariable variable=imageTag]$(npm run --silent my-version)"
-      displayName: Get version from package.json
-      # condition: if prod, reset imageTage
-    - template: step-debug.yaml
-    # - script: |
-    #     echo 'imageTag: $(imageTag)'
-    #   displayName: 'Debug: image tag'
+    - script: echo "##vso[task.setvariable variable=imageTag]$(npm run --silent my-version)"
+      displayName: Override imageTag with app version
+      condition: ${{ variables.isProduction }}
 
-    # - task: AzureWebAppContainer@1
-    #   displayName: "App Service - deploy container"
-    #   inputs:
-    #     appName:  $(webAppName)
-    #     azureSubscription: $(armConnection)
-    #     imageName: $(dockerRegistry)/$(imageName):dev
-    #     # imageName: $(dockerRegistry)/$(imageName):$(imageTag)
+    - template: step-debug.yaml
+
+    - task: AzureWebAppContainer@1
+      displayName: "App Service - deploy container"
+      inputs:
+        appName:  $(webAppName)
+        azureSubscription: $(armConnection)
+        imageName: $(dockerRegistry)/$(imageName):$(imageTag)
 
   # Asset Pipeline
   # --------------
-  # - job: AssetPipeline
-  #   steps:
-  #   - template: step-debug.yaml
+  - job: AssetPipeline
+    steps:
+    - template: step-debug.yaml
 
-  #   - script: |
-  #       npm ci
-  #       npm run compile-sass
-  #     displayName: 'Compile Sass to CSS'
+    - script: |
+        npm ci
+        npm run compile-sass
+      displayName: 'Compile Sass to CSS'
 
-  #   - task: AzureCLI@2
-  #     displayName: Assets - Upload and Purge Cache
-  #     inputs:
-  #       azureSubscription: $(armConnection)
-  #       scriptType: bash
-  #       scriptLocation: inlineScript
-  #       inlineScript: |
-  #         az --version
+    - task: AzureCLI@2
+      displayName: Assets - Upload and Purge Cache
+      inputs:
+        azureSubscription: $(armConnection)
+        scriptType: bash
+        scriptLocation: inlineScript
+        inlineScript: |
+          az --version
 
-  #         az storage blob upload-batch \
-  #           --account-name $(storageAccount) \
-  #           --source ./assets \
-  #           --destination $(blobContainer)
+          az storage blob upload-batch \
+            --account-name $(storageAccount) \
+            --source ./assets \
+            --destination $(blobContainer)
 
-  #         az cdn endpoint purge \
-  #           --resource-group $(resourceGroup) \
-  #           --name $(cdnEndpoint) \
-  #           --profile-name $(cdnProfileName) \
-  #           --content-paths '/css/*' '/images/*'
+          az cdn endpoint purge \
+            --resource-group $(resourceGroup) \
+            --name $(cdnEndpoint) \
+            --profile-name $(cdnProfileName) \
+            --content-paths '/css/*' '/images/*'
