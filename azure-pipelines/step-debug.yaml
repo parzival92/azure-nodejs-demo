@@ -1,3 +1,4 @@
+steps:
 - bash: |
     echo 'imageTag:   $(imageTag)'
     echo 'dockerTag:  $(dockerTag)'
