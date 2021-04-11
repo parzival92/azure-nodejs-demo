@@ -1,3 +1,5 @@
+# empty commits don't trigger pipelines? 😢
+
 name: $(BuildID)
 
 trigger:
