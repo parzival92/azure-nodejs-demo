@@ -1,5 +1,23 @@
 steps:
 - bash: |
-    echo 'imageTag:   $(imageTag)'
-    echo 'dockerTag:  $(dockerTag)'
+    echo '===== Conditions =====*'
+    echo 'isMain:         $(isMain)'
+    echo 'isTag:          $(isTag)'
+    echo 'isProduction:   $(isProduction)'
+    echo 'notFork:        $(notFork)'
+    echo 'notPR:          $(notPR)'
+    echo 'notSchedule:    $(notSchedule)'
+    echo 'isTrustedCI:    $(isTrustedCI)'
+    echo ''
+
+    echo '===== DOCKER =====*'
+    echo 'imageTag:       $(imageTag)'
+    echo 'dockerTag:      $(dockerTag)'
+    echo ''
+
+    echo '===== DEPLOYMENT =====*'
+    echo 'webAppName:     $(webAppName)'
+    echo 'blobContainer:  $(blobContainer)'
+    echo 'cdnEndpoint:    $(cdnEndpoint)'
+
   displayName: Debug - Tags
