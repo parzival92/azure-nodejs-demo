@@ -87,18 +87,7 @@ stages:
         monitorOnBuild: true
         failOnIssues: true
 
-    # Note: about `docker login` & Security
-    #
-    # - Use case: We want to perform a security scan our docker image *before* pushing it
-    #
-    # - Problem:  Azure pipelines built in tasks can only do build _and_ push.
-    #             Judging by source in github.com it is because it handles docker
-    #             tagging convention, e.g. $(dockerRegistry)/$(imageName):$(imageTag)
-    #             as if an engineer wouldn't know that… maybe they don't? 😬
-    #
-    # - Workaround: I prefer plain `docker login` anyway. Because we are deploying to App Service,
-    #               registry admin access is enabled anyway.
-
+    # See README.md about why `docker login`
     - bash: docker login $(dockerRegistry) --username $ACR_USERNAME --password $ACR_PASSWORD
       displayName: registry - login
       env:
