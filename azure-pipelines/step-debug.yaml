@@ -1,0 +1,4 @@
+bash: |
+  echo 'imageTag:   $(imageTag)'
+  echo 'dockerTag:  $(dockerTag)'
+displayName: Debug - Tags

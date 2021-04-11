@@ -34,13 +34,13 @@ stages:
 
 # Tests Stage
 # -----------
-# Skipped for tags, i.e. no new code
-
 - stage: Tests
   condition: not(${{ variables.isTag }})
   jobs:
   - job: Tests
     steps:
+    - template: step-debug.yaml
+
     - script: npm ci
       displayName: npm install
 
@@ -60,10 +60,6 @@ stages:
 
 # Build Stage
 # -----------
-# Runs if:
-# - push a tag starting with `v` (skips tests)
-# - push to main (if tests passed)
-
 - stage: Build
   displayName: Docker - Build and Push
   condition: or(${{ variables.isTag }}, and(succeeded(), ${{ variables.isMain }}, ${{ variables.isTrustedCI }}))
@@ -71,17 +67,17 @@ stages:
     - group: nodejs-demo-kv
   jobs:
   - job: Build
-    # variables:
-    #   ${{ if eq(variables.isTag, 'True') }}:
-    #     imageTag: ${{ replace(variables['Build.SourceBranch'], 'refs/tags/v', '') }}
-    #   dockerTag: ${{ variables.dockerRegistry }}/${{ variables.imageName }}:${{ variables.imageTag }}
     steps:
-    - bash: |
-        echo 'imageTag: $(imageTag)'
-        echo 'dockerTag: $(dockerTag)'
-      displayName: Debug - Tags
+    - template: step-debug.yaml
+    # - bash: |
+    #     echo 'imageTag: $(imageTag)'
+    #     echo 'dockerTag: $(dockerTag)'
+    #   displayName: Debug - Tags
 
-    - bash: docker build -t $(dockerTag) .
+    - bash: |
+        npm ci
+        npm run compile-sass
+        docker build -t $(dockerTag) .
       displayName: docker - build
 
     - task: SnykSecurityScan@0
