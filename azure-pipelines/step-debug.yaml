@@ -1,6 +1,7 @@
 steps:
 - bash: |
-    echo '===== Conditions =====*'
+    echo ''
+    echo '===== Conditions ====='
     echo 'isMain:         $(isMain)'
     echo 'isTag:          $(isTag)'
     echo 'isProduction:   $(isProduction)'
@@ -10,14 +11,14 @@ steps:
     echo 'isTrustedCI:    $(isTrustedCI)'
     echo ''
 
-    echo '===== DOCKER =====*'
+    echo '===== DOCKER ====='
     echo 'imageTag:       $(imageTag)'
     echo 'dockerTag:      $(dockerTag)'
     echo ''
 
-    echo '===== DEPLOYMENT =====*'
+    echo '===== DEPLOYMENT ====='
     echo 'webAppName:     $(webAppName)'
     echo 'blobContainer:  $(blobContainer)'
     echo 'cdnEndpoint:    $(cdnEndpoint)'
-
+    echo ''
   displayName: Debug - Tags
