@@ -17,9 +17,9 @@ stages:
 - stage: Deployment
   variables:
     ${{ if eq(variables.isMain, 'True') }}:
-    - template: vars-dev.yaml
+      - template: vars-dev.yaml
     ${{ if eq(variables.isProduction, 'True') }}:
-    - template: vars-prod.yaml
+      - template: vars-prod.yaml
   jobs:
 
   # Deploy Web App
