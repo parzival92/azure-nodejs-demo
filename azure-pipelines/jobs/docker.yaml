@@ -10,15 +10,6 @@ jobs:
       docker build -t $(dockerImage):$(imageTag) .
     displayName: Docker - build
 
-  - task: SnykSecurityScan@0
-    displayName: Snyk - security scan
-    inputs:
-      serviceConnectionEndpoint: 'snyk-api-connection'
-      testType: 'container'
-      dockerImageName: $(dockerImage):$(imageTag)
-      dockerfilePath: 'Dockerfile'
-      monitorOnBuild: true
-      failOnIssues: true
 
 - job: DockerPush
   displayName: Push
