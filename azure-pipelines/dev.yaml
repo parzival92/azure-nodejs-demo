@@ -42,19 +42,4 @@ stages:
   jobs:
   - template: jobs/tests.yaml
 
-# Build
-# -----
-- stage: DockerStage
-  displayName: Build (Docker)
-  condition: or(eq(variables.isTag,'True'), and(succeeded(), eq(variables.deployMain,'True')))
-  jobs:
-  - template: jobs/docker.yaml
 
-  # Deploy
-  # ------
-- stage: DeployStage
-  displayName: Deploy (App Service)
-  condition: and(succeeded(), eq(variables.deployMain,'True'))
-  jobs:
-  - template: jobs/app-service.yaml
-  - template: jobs/asset-pipeline.yaml
